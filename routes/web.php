@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminHomeController;
+use App\Http\Controllers\Admin\AdminRegisterController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,9 +23,17 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::get('/admin/register', [\App\Http\Controllers\Admin\AdminRegisterController::class, 'index'])->name('admin.register');
+
 
 
 Route::get('/new', function(){
     return "hello new";
+});
+Route::prefix('admin')->group(function () {
+    Route::get('/', function () {
+        return view('admin.welcome');
+    });
+    Route::get('/register', [AdminRegisterController::class, 'register'])->name('admin.register');
+    Route::get('/login', [AdminRegisterController::class, 'login'])->name('admin.login');
+    Route::get('/home', [AdminHomeController::class, 'index'])->name('admin.home');
 });

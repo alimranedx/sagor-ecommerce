@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use function PHPUnit\Framework\matches;
 
 class RegisterController extends Controller
 {
@@ -71,5 +72,14 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
             'user_type' => $data['user_type'],
         ]);
+    }
+
+    /* redirect to dashboard  as type of auth user user_type after complete registration */
+    protected function redirectTo(){
+        $user_type = (string) (auth()->user()->user_type);
+        return match ($user_type){
+            '1' => '/admin/home',
+            default => '/home'
+        };
     }
 }
