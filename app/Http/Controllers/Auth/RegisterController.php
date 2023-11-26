@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
+use common\authentication\RedirectToLoginRegister;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -76,10 +77,6 @@ class RegisterController extends Controller
 
     /* redirect to dashboard  as type of auth user user_type after complete registration */
     protected function redirectTo(){
-        $user_type = (string) (auth()->user()->user_type);
-        return match ($user_type){
-            '1' => '/admin/home',
-            default => '/home'
-        };
+        return RedirectToLoginRegister::redirectToHome();
     }
 }

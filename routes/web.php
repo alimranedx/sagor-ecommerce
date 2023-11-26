@@ -31,7 +31,7 @@ Route::get('/new', function(){
 });
 Route::prefix('admin')->group(function () {
     Route::get('/', function () {
-        return view('admin.welcome');
+        return redirect()->route('admin.login');
     });
     Route::get('/register', [AdminRegisterController::class, 'register'])->name('admin.register');
     Route::get('/login', [AdminRegisterController::class, 'login'])->name('admin.login');

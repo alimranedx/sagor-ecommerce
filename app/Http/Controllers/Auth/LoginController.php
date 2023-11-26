@@ -4,7 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
+use common\authentication\RedirectToLoginRegister;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
@@ -27,6 +31,7 @@ class LoginController extends Controller
      * @var string
      */
     protected $redirectTo = RouteServiceProvider::HOME;
+    protected $user_type = null;
 
     /**
      * Create a new controller instance.
@@ -40,10 +45,28 @@ class LoginController extends Controller
 
     /* redirect to dashboard  as type of auth user user_type after complete registration */
     protected function redirectTo(){
-        $user_type = (string) (auth()->user()->user_type);
-        return match ($user_type){
-            '1' => '/admin/home',
-            default => '/home'
-        };
+        return RedirectToLoginRegister::redirectToHome();
+    }
+    protected function redirectTologin(){
+        return RedirectToLoginRegister::redirectToLogin($this->user_type);
+    }
+
+    public function logout(Request $request)
+    {
+        if(Auth::check()){
+            $this->user_type = (string) (Auth::user()->user_type);
+        }
+        $this->guard()->logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        if ($response = $this->loggedOut($request)) {
+            return $response;
+        }
+        return $request->wantsJson()
+            ? new JsonResponse([], 204)
+            : redirect($this->redirectTologin());
     }
 }
